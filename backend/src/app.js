@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import cors from "cors";
 import express from "express";
+import cookieParser from "cookie-parser";
 
 import userRoutes from "./routes/user.routes.js";
 
@@ -26,6 +27,8 @@ app.use(
     limit: "16kb",
   })
 );
+
+app.use(cookieParser());
 
 app.use("/api/v1/users", userRoutes);
 

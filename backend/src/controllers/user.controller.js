@@ -14,6 +14,17 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { fullname, email, password } = req.body;
 
+  const existingUser = await User.findOne({
+    email: email.toLowerCase(),
+  });
+
+  if (existingUser) {
+    return res.status(409).json({
+      status: "fail",
+      message: "User already exists",
+    });
+  }
+
   const hashedpassword = await User.hashPassword(password);
 
   const user = await createUser({

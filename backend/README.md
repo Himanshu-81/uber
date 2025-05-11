@@ -246,7 +246,7 @@ Logs out the authenticated user by blacklisting the current JWT token and cleari
 ### Process Flow
 
 1. **Authentication**:
-   - The route is protected by the `verifyJwt` middleware. The user must provide a valid JWT token in the `Authorization` header or as a cookie.
+   - The route is protected by the `authUser` middleware. The user must provide a valid JWT token in the `Authorization` header or as a cookie.
 2. **Token Blacklisting**:
    - The token is added to the blacklist in the database to prevent further use.
 3. **Cookie Clearing**:
@@ -284,7 +284,7 @@ Fetches the profile of the currently authenticated user.
 ### Process Flow
 
 1. **Authentication**:
-   - The route is protected by the `verifyJwt` middleware. The user must provide a valid JWT token in the `Authorization` header or as a cookie.
+   - The route is protected by the `authUser` middleware. The user must provide a valid JWT token in the `Authorization` header or as a cookie.
 2. **User Retrieval**:
    - The user is fetched from the database using the ID from the decoded JWT token.
 3. **Response**:
@@ -315,3 +315,147 @@ Fetches the profile of the currently authenticated user.
 If the token is missing, invalid, or blacklisted, a `401 Unauthorized` response is returned.
 
 ---
+
+# Captain Registration API
+
+This document describes the process of registering a captain (driver) in the database, including required fields, validation, and example input/output.
+
+---
+
+## Endpoint
+
+**POST** `/api/v1/captains/register`
+
+---
+
+## Required Fields
+
+The following fields must be provided in the request body:
+
+- **fullname.firstname**: String, required, minimum 3 characters
+- **fullname.lastname**: String, required, minimum 3 characters
+- **email**: String, required, must be a valid email address
+- **password**: String, required, minimum 6 characters
+- **vehicle.color**: String, required, minimum 3 characters
+- **vehicle.plate**: String, required, minimum 3 characters
+- **vehicle.capacity**: Number, required, minimum 1
+- **vehicle.vehicleType**: String, required, one of: `"car"`, `"bike"`, `"auto"`
+
+---
+
+## Example Request Body
+
+```json
+{
+  "fullname": {
+    "firstname": "Alice",
+    "lastname": "Smith"
+  },
+  "email": "alice.smith@example.com",
+  "password": "securePass123",
+  "vehicle": {
+    "color": "Red",
+    "plate": "XYZ1234",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+---
+
+## Process Flow
+
+1. **Validation**  
+   All fields are validated using `express-validator`. If validation fails, a `401` response is returned with error details.
+
+2. **Duplicate Check**  
+   The API checks if a captain with the given email already exists. If so, a `409` response is returned.
+
+3. **Password Hashing**  
+   The password is hashed before saving to the database.
+
+4. **Captain Creation**  
+   The captain is created in the database with the provided details.
+
+5. **Token Generation**  
+   A JWT token is generated for the newly registered captain.
+
+---
+
+## Success Response
+
+**Status Code:** `201 Created`
+
+**Response Body:**
+
+```json
+{
+  "status": "success",
+  "captain": {
+    "_id": "662f1c2e8b1e4a001e8b1e4a",
+    "fullname": {
+      "firstname": "Alice",
+      "lastname": "Smith"
+    },
+    "email": "alice.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "XYZ1234",
+      "capacity": 4,
+      "vehicleType": "car",
+      "location": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "status": "active",
+    "socketId": null
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+---
+
+## Error Responses
+
+### Validation Error
+
+**Status Code:** `401 Unauthorized`
+
+```json
+{
+  "errors": [
+    {
+      "msg": "First name must be at least 3 characters long",
+      "param": "fullname.firstname",
+      "location": "body"
+    },
+    {
+      "msg": "Invalid email address",
+      "param": "email",
+      "location": "body"
+    }
+  ]
+}
+```
+
+### Duplicate Email
+
+**Status Code:** `409 Conflict`
+
+```json
+{
+  "status": "fail",
+  "message": "Captain already exists"
+}
+```
+
+---
+
+## Notes
+
+- Passwords are securely hashed before storage.
+- JWT token is returned for authentication in future requests.
+- All fields are required for successful registration.

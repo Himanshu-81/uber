@@ -7,7 +7,7 @@ import {
   getUserProfile,
   logoutUser,
 } from "../controllers/user.controller.js";
-import { verifyJwt } from "../middleware/auth.middleware.js";
+import { authUser } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -36,8 +36,8 @@ router.post(
   loginUser
 );
 
-router.get("/profile", verifyJwt, getUserProfile);
+router.get("/profile", authUser, getUserProfile);
 
-router.get("/logout", verifyJwt, logoutUser);
+router.get("/logout", authUser, logoutUser);
 
 export default router;

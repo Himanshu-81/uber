@@ -459,3 +459,181 @@ The following fields must be provided in the request body:
 - Passwords are securely hashed before storage.
 - JWT token is returned for authentication in future requests.
 - All fields are required for successful registration.
+
+## **Captain Login**
+
+### Endpoint
+
+**POST** `/api/v1/captains/login`
+
+### Required Fields
+
+- **email**: String, required, must be a valid email address
+- **password**: String, required, minimum 6 characters
+
+### Example Request Body
+
+```json
+{
+  "email": "alice.smith@example.com",
+  "password": "securePass123"
+}
+```
+
+### Success Response
+
+**Status Code:** `200 OK`
+
+**Response Body:**
+
+```json
+{
+  "status": "success",
+  "captain": {
+    "_id": "662f1c2e8b1e4a001e8b1e4a",
+    "fullname": {
+      "firstname": "Alice",
+      "lastname": "Smith"
+    },
+    "email": "alice.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "XYZ1234",
+      "capacity": 4,
+      "vehicleType": "car",
+      "location": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "status": "active",
+    "socketId": null
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "message": "Captain logged in successfully"
+}
+```
+
+### Error Responses
+
+#### Invalid Credentials
+
+**Status Code:** `401 Unauthorized`
+
+```json
+{
+  "status": "fail",
+  "message": "Invalid email or password"
+}
+```
+
+#### Validation Error
+
+**Status Code:** `401 Unauthorized`
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid email address",
+      "param": "email",
+      "location": "body"
+    },
+    {
+      "msg": "Password must be at least 6 characters long",
+      "param": "password",
+      "location": "body"
+    }
+  ]
+}
+```
+
+---
+
+## **Get Captain Profile**
+
+### Endpoint
+
+**GET** `/api/v1/captains/profile`
+
+### Authentication
+
+- Requires a valid JWT token in the `Authorization` header or as a cookie.
+
+### Success Response
+
+**Status Code:** `200 OK`
+
+**Response Body:**
+
+```json
+{
+  "status": "success",
+  "captain": {
+    "_id": "662f1c2e8b1e4a001e8b1e4a",
+    "fullname": {
+      "firstname": "Alice",
+      "lastname": "Smith"
+    },
+    "email": "alice.smith@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plate": "XYZ1234",
+      "capacity": 4,
+      "vehicleType": "car",
+      "location": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "status": "active",
+    "socketId": null
+  },
+  "message": "Captain profile fetched successfully"
+}
+```
+
+### Error Response
+
+**Status Code:** `401 Unauthorized`
+
+```json
+{
+  "message": "Unauthorized Access"
+}
+```
+
+---
+
+## **Logout Captain**
+
+### Endpoint
+
+**GET** `/api/v1/captains/logout`
+
+### Authentication
+
+- Requires a valid JWT token in the `Authorization` header or as a cookie.
+
+### Success Response
+
+**Status Code:** `200 OK`
+
+**Response Body:**
+
+```json
+{
+  "status": "success",
+  "message": "Captain logged out successfully"
+}
+```
+
+### Error Response
+
+**Status Code:** `401 Unauthorized`
+
+```json
+{
+  "message": "Unauthorized Access"
+}
+```

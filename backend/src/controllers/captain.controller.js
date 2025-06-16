@@ -6,6 +6,7 @@ import { Captain } from "../models/captain.model.js";
 import { validationResult } from "express-validator";
 
 import { BlackListToken } from "../models/blacklistToken.model.js";
+import jwt from "jsonwebtoken";
 
 const registerCaptain = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
@@ -109,6 +110,7 @@ const logoutCaptain = asyncHandler(async (req, res) => {
   const isBlackListed = await BlackListToken.findOne({ token });
 
   if (isBlackListed) {
+    console.log("Token is blacklisted", token);
     return res.status(401).json({ message: "Unauthorized Access" });
   }
 
@@ -121,4 +123,37 @@ const logoutCaptain = asyncHandler(async (req, res) => {
     message: "Captain logged out successfully",
   });
 });
-export { registerCaptain, loginCaptain, getCaptainProfile, logoutCaptain };
+
+const verifyCaptain = asyncHandler(async (req, res) => {
+  const token =
+    req.cookies.token || req.headers["authorization"]?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
+
+  const isBlackListed = await BlackListToken.findOne({ token });
+
+  if (isBlackListed) {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
+
+  const decodedCaptain = jwt.verify(token, process.env.JWT_SECRET);
+
+  if (!decodedCaptain) {
+    return res.status(401).json({ message: "Invalid Token" });
+  }
+
+  return res.status(200).json({
+    status: "success",
+    data: decodedCaptain,
+    message: "Captain verified successfully",
+  });
+});
+export {
+  registerCaptain,
+  loginCaptain,
+  getCaptainProfile,
+  logoutCaptain,
+  verifyCaptain,
+};

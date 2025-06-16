@@ -88,16 +88,10 @@ const logoutUser = asyncHandler(async (req, res) => {
     secure: true,
   });
 
-  console.log(token);
-
   const isAlreadyBlackListedToken = await BlackListToken.findOne({ token });
-
-  console.log(isAlreadyBlackListedToken);
 
   // if (!isAlreadyBlackListedToken)
   const createdBlackListedToken = await BlackListToken.create({ token });
-
-  console.log(createdBlackListedToken);
 
   res.status(200).json({
     message: "Logout successfully",

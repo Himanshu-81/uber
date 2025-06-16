@@ -1,23 +1,32 @@
-import { Link } from "react-router-dom";
+import React from "react";
 
 const Home = () => {
   return (
-    <div>
-      <div
-        className={`bg-[url(/traffic-light.jpg)] bg-cover bg-center h-screen flex justify-between flex-col w-full`}
-      >
-        <img src={"logo.png"} className="w-38 p-7" alt="" />
-        <div className="bg-white py-5 pb-7 px-10">
-          <h2 className="text-3xl font-bold text-center">
-            Get Started with Uber
-          </h2>
-          <Link
-            to={"/login"}
-            className="flex items-center justify-center w-full bg-black text-white py-3 rounded mt-5 text-lg"
-          >
-            Continue
-          </Link>
+    <div className="h-screen relative">
+      <img className="w-20 absolute left-5 top-5" src="logo.png" alt="" />
+
+      <div className="h-screen w-screen">
+        <img className="h-full w-full object-cover" src="map.png" alt="" />
+      </div>
+
+      <div className="absolute h-screen flex flex-col justify-end top-0 w-full">
+        <div className="h-[30%] p-5 bg-white">
+          <h4 className="text-2xl font-semibold">Find a trip</h4>
+          <form>
+            <input
+              className="bg-[#eee] px-12 py-2 text-base rounded-lg w-full mt-5"
+              type="text"
+              placeholder="Add a pick up location"
+            />
+            <input
+              className="bg-[#eee] px-12 py-2 text-base rounded-lg w-full mt-3"
+              type="text"
+              placeholder="Enter your destination"
+            />
+          </form>
         </div>
+
+        <div className="h-0"></div>
       </div>
     </div>
   );

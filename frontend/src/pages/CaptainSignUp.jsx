@@ -1,29 +1,60 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CaptainSignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setfirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [userData, setUserData] = useState({});
+  const [vehicleColor, setVehicleColor] = useState("");
+  const [vehiclePlate, setVehiclePlate] = useState("");
+  const [vehicleCapacity, setVehicleCapacity] = useState("");
+  const [vehicleType, setVehicleType] = useState("");
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setUserData({
-      fullName: {
-        firstName: firstName,
-        lastName: lastName,
+    const captainData = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
       },
-      email: email,
-      password: password,
-    });
+      email,
+      password,
+      vehicle: {
+        color: vehicleColor,
+        plate: vehiclePlate,
+        capacity: vehicleCapacity,
+        vehicleType: vehicleType,
+      },
+    };
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}captains/register`,
+        captainData
+      );
+      if (response.status === 201) {
+        const data = response.data;
+        localStorage.setItem("token", data.token);
+        navigate("/captain-home");
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
     setPassword("");
     setEmail("");
     setfirstName("");
     setLastName("");
+    setVehicleColor("");
+    setVehiclePlate("");
+    setVehicleCapacity("");
+    setVehicleType("");
   };
 
   return (
@@ -71,6 +102,51 @@ const CaptainSignUp = () => {
             required
             placeholder="password"
           />
+
+          <h3 className="text-lg font-medium mb-2">Vehicle Information</h3>
+          <div className="flex items-center justify-between gap-3 mb-7">
+            <input
+              type="text"
+              value={vehicleColor}
+              onChange={(e) => setVehicleColor(e.target.value)}
+              className="bg-[#eeeeee] rounded px-4 py-3 w-1/2 text-lg placeholder:text-base focus:outline-black focus:border-0"
+              required
+              placeholder="vehicle color"
+            />
+            <input
+              type="text"
+              value={vehiclePlate}
+              onChange={(e) => setVehiclePlate(e.target.value)}
+              className="bg-[#eeeeee] rounded px-4 py-3 w-1/2 text-lg placeholder:text-base focus:outline-black focus:border-0"
+              required
+              placeholder="vehicle plate"
+            />
+          </div>
+          <div className="flex items-center justify-between gap-3 mb-7">
+            <input
+              type="number"
+              min={1}
+              max={8}
+              value={vehicleCapacity}
+              onChange={(e) => setVehicleCapacity(e.target.value)}
+              className="bg-[#eeeeee] rounded px-4 py-3 w-1/2 text-lg placeholder:text-base focus:outline-black focus:border-0"
+              required
+              placeholder="vehicle capacity"
+            />
+            <select
+              name="vehicleType"
+              required
+              value={vehicleType}
+              onChange={(e) => setVehicleType(e.target.value)}
+              className="bg-[#eeeeee] rounded px-4 py-3 w-1/2 text-lg placeholder:text-base focus:outline-black focus:border-0"
+            >
+              <option style={{ display: "none" }}>Select vehicle type</option>
+              <option value="car">Car</option>
+              <option value="bike">Bike</option>
+              <option value="auto">Auto</option>
+            </select>
+          </div>
+
           <button className="bg-[#111] text-white font-semibold mb-4 rounded px-4 py-3 w-full text-lg placeholder:text-base">
             Sign up
           </button>

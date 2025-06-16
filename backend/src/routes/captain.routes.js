@@ -8,6 +8,7 @@ import {
   loginCaptain,
   getCaptainProfile,
   logoutCaptain,
+  verifyCaptain,
 } from "../controllers/captain.controller.js";
 
 const router = express.Router();
@@ -51,6 +52,8 @@ router.post(
 
 router.get("/profile", authCaptain, getCaptainProfile);
 
-router.get("/logout", authCaptain, logoutCaptain);
+router.get("/logout", logoutCaptain);
+
+router.get("/verify-token", verifyCaptain);
 
 export default router;

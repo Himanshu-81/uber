@@ -14,6 +14,8 @@ import CaptainHome from "./pages/CaptainHome.jsx";
 import CaptainProtectedWrapper from "./pages/CaptainProtectedWrapper.jsx";
 import CaptainGuestOnlyWrapper from "./pages/CaptainGuestOnlyWrapper.jsx";
 import CaptainLogout from "./pages/CaptainLogout.jsx";
+import Riding from "./pages/Riding.jsx";
+import CaptainRiding from "./pages/CaptainRiding.jsx";
 
 function App() {
   return (
@@ -34,6 +36,14 @@ function App() {
             <GuestOnlyWrapper>
               <UserSignUp />
             </GuestOnlyWrapper>
+          }
+        />
+        <Route
+          path="/riding"
+          element={
+            <Riding>
+              <UserSignUp />
+            </Riding>
           }
         />
         <Route
@@ -82,6 +92,14 @@ function App() {
           element={
             <CaptainProtectedWrapper>
               <CaptainHome />
+            </CaptainProtectedWrapper>
+          }
+        />
+        <Route
+          path="/ride-started"
+          element={
+            <CaptainProtectedWrapper>
+              <CaptainRiding />
             </CaptainProtectedWrapper>
           }
         />
